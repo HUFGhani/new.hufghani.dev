@@ -5,6 +5,7 @@ import { StackContext, SvelteKitSite,Bucket } from 'sst/constructs'
 
 export function Website({ stack }: StackContext): void {
 	const domainName = 'hufghani.dev'
+	const bucketName = "hufghani.dev-open-graph-image-bucket"
 	const hostedZone: route53.IHostedZone = route53.HostedZone.fromLookup(stack, 'HostedZone', {
 		domainName,
 	})
@@ -18,6 +19,9 @@ export function Website({ stack }: StackContext): void {
 	const site: SvelteKitSite = new SvelteKitSite(stack, 'Site', {
 		edge: true,
 		runtime: 'nodejs18.x',
+		environment:{
+			S3_BUCKET_NAME: bucketName
+		},
 		customDomain: {
 			domainName,
 			cdk: {
@@ -30,10 +34,11 @@ export function Website({ stack }: StackContext): void {
 		URL: site.customDomainUrl,
 	})
 
+
 	const bucket = new Bucket(stack,"hufghani-open-graph-image-bucket",{
 		cdk:{
 			bucket:{
-				bucketName:"hufghani.dev-open-graph-image-bucket"
+				bucketName
 			}
 		}
 	})
